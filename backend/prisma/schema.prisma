@@ -1,0 +1,99 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String      @id @default(cuid())
+  walletAddress     String      @unique
+  username          String?
+  email             String?
+  builderScore      Int         @default(0)
+  talentPassportId  String?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  
+  milestones        Milestone[]
+  skillNFTs         SkillNFT[]
+  endorsements      Endorsement[]
+  
+  @@index([walletAddress])
+}
+
+model SkillNFT {
+  id                String      @id @default(cuid())
+  tokenId           Int         @unique
+  owner             User        @relation(fields: [ownerId], references: [id])
+  ownerId           String
+  category          String
+  level             Int         @default(1)
+  xp                Int         @default(0)
+  rarity            String      @default("Common")
+  totalMilestones   Int         @default(0)
+  metadataUri       String?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  
+  milestones        Milestone[]
+  
+  @@index([ownerId])
+  @@index([tokenId])
+}
+
+model Milestone {
+  id                String      @id @default(cuid())
+  onChainId         Int?
+  builder           User        @relation(fields: [builderId], references: [id])
+  builderId         String
+  skillNFT          SkillNFT?   @relation(fields: [skillNFTId], references: [id])
+  skillNFTId        String?
+  
+  type              String
+  title             String
+  description       String
+  proofUrl          String
+  status            String      @default("Pending")
+  xpAwarded         Int         @default(0)
+  
+  githubData        Json?
+  verificationData  Json?
+  
+  createdAt         DateTime    @default(now())
+  verifiedAt        DateTime?
+  
+  endorsements      Endorsement[]
+  
+  @@index([builderId])
+  @@index([status])
+}
+
+model Endorsement {
+  id          String      @id @default(cuid())
+  endorser    User        @relation(fields: [endorserId], references: [id])
+  endorserId  String
+  milestone   Milestone   @relation(fields: [milestoneId], references: [id])
+  milestoneId String
+  createdAt   DateTime    @default(now())
+  
+  @@unique([endorserId, milestoneId])
+  @@index([milestoneId])
+}
+
+model TalentSync {
+  id                String      @id @default(cuid())
+  walletAddress     String
+  syncType          String
+  data              Json
+  success           Boolean
+  errorMessage      String?
+  createdAt         DateTime    @default(now())
+  
+  @@index([walletAddress])
+}

@@ -1,0 +1,30 @@
+{
+  "name": "cosmic-creator",
+  "version": "1.0.0",
+  "description": "A Web3 Talent Verification & Skill Tokenization Protocol integrated with Talent Protocol",
+  "private": true,
+  "workspaces": [
+    "contracts",
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:contracts\" \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:contracts": "cd contracts && forge test --watch",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build": "npm run build:contracts && npm run build:backend && npm run build:frontend",
+    "build:contracts": "cd contracts && forge build",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "test": "npm run test:contracts && npm run test:backend",
+    "test:contracts": "cd contracts && forge test",
+    "test:backend": "cd backend && npm test",
+    "deploy:local": "cd contracts && forge script script/Deploy.s.sol:Deploy --rpc-url http://localhost:8545 --broadcast"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "author": "",
+  "license": "MIT"
+}
