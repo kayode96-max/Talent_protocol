@@ -113,6 +113,21 @@ cosmic-creator/
 - **Foundry** - Install: `curl -L https://foundry.paradigm.xyz | bash && foundryup`
 - **Git**
 
+If you're on **Windows (PowerShell)**, install Foundry with the following commands in an elevated PowerShell prompt:
+
+```powershell
+# Bootstrap Foundry installer
+iwr https://foundry.paradigm.xyz -useb | iex
+
+# Run the installer
+foundryup
+
+# After install, restart your PowerShell or terminal. Verify with:
+forge --version
+```
+
+If `forge` is still not found, ensure `$env:USERPROFILE\.foundry\bin` (or where foundry installs) is added to your `PATH` and restart your shell.
+
 ### Installation
 
 1. **Clone the repository**
@@ -143,6 +158,14 @@ cosmic-creator/
 cd contracts
 cp .env.example .env
 # Edit .env with your values
+```
+
+On Windows, after installing Foundry, run the following from the `contracts` folder to install OpenZeppelin and build:
+
+```powershell
+cd contracts
+forge install OpenZeppelin/openzeppelin-contracts
+forge build
 ```
 
 **Run tests:**

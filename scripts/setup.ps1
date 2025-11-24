@@ -19,6 +19,28 @@ if (-not $forgeInstalled) {
     exit 1
 }
 
+# If forge is not installed, offer to install Foundry automatically (requires internet and PowerShell elevated rights)
+if (-not $forgeInstalled) {
+    $install = Read-Host "Foundry (forge) not found. Would you like to attempt automatic installation now? (Y/N)"
+    if ($install -match '^[Yy]') {
+        try {
+            Write-Host "Attempting to install Foundry (foundryup)..." -ForegroundColor Cyan
+            # Official installer bootstrap
+            Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://foundry.paradigm.xyz'))
+            Write-Host "Running foundryup to install forge..." -ForegroundColor Cyan
+            & foundryup
+            Write-Host "Foundry installation attempted. You may need to restart your shell." -ForegroundColor Green
+        } catch {
+            Write-Host "Automatic Foundry installation failed: $($_.Exception.Message)" -ForegroundColor Red
+            Write-Host "Please install Foundry manually: https://book.getfoundry.sh/getting-started/installation" -ForegroundColor Yellow
+            exit 1
+        }
+    } else {
+        Write-Host "Skipping Foundry installation. Please install Foundry to use forge commands." -ForegroundColor Yellow
+        exit 1
+    }
+}
+
 if (-not $psqlInstalled) {
     Write-Host "⚠️  PostgreSQL not found. You'll need to install it manually." -ForegroundColor Yellow
 }
